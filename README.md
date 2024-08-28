@@ -1,4 +1,4 @@
-# Socket-io
+Socket-io
 
 Basic Chat Applicaton
 
