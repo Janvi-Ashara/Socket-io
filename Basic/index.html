@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Chat App</title>
+    <style>
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            padding: 8px;
+            margin-bottom: 10px;
+            background-color: #f2f2f2;
+        }
+
+        input {
+            padding: 10px;
+            width: calc(100% - 22px);
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <ul id="messages"></ul>
+    <input id="input" autocomplete="off" placeholder="Type a message..." />
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+
+        const input = document.getElementById('input');
+        const messages = document.getElementById('messages');
+
+        input.addEventListener('keypress', function (event) {
+            if (event.key === 'Enter') {
+                socket.emit('chat message', input.value);
+                event.value = '';
+            }
+        });
+
+        socket.on('chat message', function (msg) {
+            const item = document.createElement('li');
+            item.textContent = msg;
+            messages.appendChild(item);
+            window.scrollTo(0, document.body.scrollHeight);
+        });
+    </script>
+</body>
+
+</html>

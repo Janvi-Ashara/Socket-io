@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Application</title>
+    
+</head>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js">
+
+</script>
+<script>
+   var socket = io();
+    var user;
+
+    function setUserName() {
+        if (document.getElementById('name').value == '') {
+            alert('please enter your name !');
+        } else {
+            socket.emit('setUserName', document.getElementById('name').value);
+        }
+    }
+
+    socket.on('userExists', function (data) {
+        document.getElementById('exitsts-error').innerHTML = data;
+    });
+
+    socket.on('setUser', function (data) {
+        user = data.username;
+        document.getElementById('new-user-form').innerHTML =
+            '<input type="text" id="message">\
+        <button type="button" onclick="sendMessage()">Send</button>\
+        <div id="message-container"></div>';
+    });
+
+    function sendMessage() {
+        var message = document.getElementById('message').value;
+        if (message !== '') {
+            document.getElementById('message').value = '';
+            socket.emit('msg', { message: message, user: user });
+        }
+    }
+
+    socket.on('newmsg', function (data) {
+        if (user) {
+            document.getElementById('message-container').innerHTML +=
+                '<div>\
+                <b>' + data.user + '</b>: ' + data.message + '\
+            </div>';
+        }
+    });
+
+</script>
+
+<body>
+    <h1>Group chat application</h1>
+    <div id="new-user-form">
+        <div id="exitsts-error" style="color: red;"></div>
+        <input type="text" id="name" name="name" placeholder="Enter your name">
+        <button type="button" onclick="setUserName()">Chat with users</button>
+    </div>
+</body>
+</html>
